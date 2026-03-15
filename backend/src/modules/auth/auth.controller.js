@@ -4,8 +4,12 @@ const apiResponse = require('../../utils/apiResponse');
 
 const register = async (req, res) => {
   const { email, password, role, hub_id } = req.body;
-  const user = await authService.register({ email, password, role, hub_id });
-  return apiResponse.success(res, user, 201);
+  try {
+    const user = await authService.register({ email, password, role, hub_id });
+    return apiResponse.success(res, user, 201);
+  } catch (err) {
+    return apiResponse.error(res, err.message, err.status || 500);
+  }
 };
 
 const login = async (req, res) => {

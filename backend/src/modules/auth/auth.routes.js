@@ -21,7 +21,7 @@ router.post(
   [
     body('email').isEmail().normalizeEmail(),
     body('password').isLength({ min: 6 }),
-    body('role').isIn(['FLEET_ADMIN', 'DISPATCHER', 'DRIVER']),
+    body('role').isIn(['DISPATCHER', 'DRIVER']),
   ],
   validate,
   asyncWrap(controller.register)
