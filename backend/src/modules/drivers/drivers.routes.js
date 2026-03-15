@@ -12,6 +12,9 @@ router.get('/', authenticate, rbac('FLEET_ADMIN', 'DISPATCHER'), asyncWrap(contr
 // GET  /api/drivers/:driver_id
 router.get('/:driver_id', authenticate, asyncWrap(controller.getById));
 
+// GET  /api/drivers/user/:user_id
+router.get('/user/:user_id', authenticate, asyncWrap(controller.getByUserId));
+
 // PATCH /api/drivers/:driver_id/location  (Driver updates own location)
 router.patch('/:driver_id/location', authenticate, rbac('DRIVER'), asyncWrap(controller.updateLocation));
 

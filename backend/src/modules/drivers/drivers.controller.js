@@ -13,6 +13,12 @@ const getById = async (req, res) => {
   return apiResponse.success(res, driver);
 };
 
+const getByUserId = async (req, res) => {
+  const driver = await driversService.getByUserId(req.params.user_id);
+  if (!driver) return apiResponse.error(res, 'Driver not found.', 404);
+  return apiResponse.success(res, driver);
+};
+
 const updateLocation = async (req, res) => {
   const updated = await driversService.updateLocation(req.params.driver_id, req.body);
   return apiResponse.success(res, updated);
@@ -24,4 +30,4 @@ const updateStatus = async (req, res) => {
   return apiResponse.success(res, updated);
 };
 
-module.exports = { getAll, getById, updateLocation, updateStatus };
+module.exports = { getAll, getById, getByUserId, updateLocation, updateStatus };

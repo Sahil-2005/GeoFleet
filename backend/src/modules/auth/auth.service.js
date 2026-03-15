@@ -1,24 +1,50 @@
 'use strict';
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { query } = require('../../config/db');
+const { query, pool } = require('../../config/db');
 const { jwt: jwtConfig } = require('../../config/env');
 
 /**
  * Register a new user.
  */
 const register = async ({ email, password, role, hub_id }) => {
+  if (role === 'FLEET_ADMIN') {
+    throw { status: 403, message: 'FLEET_ADMIN registration is not allowed.' };
+  }
+
   const saltRounds = 12;
   const password_hash = await bcrypt.hash(password, saltRounds);
 
-  const result = await query(
-    `INSERT INTO users (email, password_hash, role, hub_id)
-     VALUES ($1, $2, $3, $4)
-     RETURNING user_id, email, role, hub_id, created_at`,
-    [email, password_hash, role, hub_id || null]
-  );
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
 
-  return result.rows[0];
+    const result = await client.query(
+      `INSERT INTO users (email, password_hash, role, hub_id)
+       VALUES ($1, $2, $3, $4)
+       RETURNING user_id, email, role, hub_id, created_at`,
+      [email, password_hash, role, hub_id || null]
+    );
+
+    const user = result.rows[0];
+
+    // If DRIVER, create driver profile
+    if (role === 'DRIVER') {
+      await client.query(
+        `INSERT INTO drivers (user_id, status)
+         VALUES ($1, 'AVAILABLE')`,
+        [user.user_id]
+      );
+    }
+
+    await client.query('COMMIT');
+    return user;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 };
 
 /**

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login as loginApi } from '../api/authApi';
 import { useAuth } from '../context/AuthContext';
 
@@ -88,6 +88,15 @@ const LoginPage = () => {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">
+              Don't have an account?{' '}
+              <Link to="/register" className="text-emerald-500 hover:text-emerald-400 font-medium transition">
+                Register
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

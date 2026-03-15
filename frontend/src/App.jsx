@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 import LoginPage      from './pages/LoginPage';
+import RegisterPage   from './pages/RegisterPage';
 import AdminPage      from './pages/AdminPage';
 import DispatcherPage from './pages/DispatcherPage';
 import DriverPage     from './pages/DriverPage';
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           {/* Public */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* Role-gated */}
           <Route path="/admin" element={
